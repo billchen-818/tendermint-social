@@ -571,9 +571,9 @@ func (c *baseRPCClient) PublishEnvelope(ctx context.Context, e ctypes.Envelope) 
 		"envelope": e,
 	}
 
-	_, err := c.caller.Call(ctx, "publish_envelop", params, result)
+	_, err := c.caller.Call(ctx, "publish_envelope", params, result)
 	if err != nil {
-		return nil, errors.New("publish_envelop failed: " + err.Error())
+		return nil, errors.New("publish_envelope failed: " + err.Error())
 	}
 
 	return result, nil
