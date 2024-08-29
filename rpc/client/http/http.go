@@ -565,6 +565,20 @@ func (c *baseRPCClient) BroadcastEvidence(
 	return result, nil
 }
 
+func (c *baseRPCClient) PublishEnvelope(ctx context.Context, e ctypes.Envelope) (*ctypes.ResultEnvelope, error) {
+	result := new(ctypes.ResultEnvelope)
+	params := map[string]interface{}{
+		"envelope": e,
+	}
+
+	_, err := c.caller.Call(ctx, "publish_envelop", params, result)
+	if err != nil {
+		return nil, errors.New("publish_envelop failed: " + err.Error())
+	}
+
+	return result, nil
+}
+
 //-----------------------------------------------------------------------------
 // WSEvents
 
