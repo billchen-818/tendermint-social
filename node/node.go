@@ -52,6 +52,7 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 	"github.com/tendermint/tendermint/version"
+	"github.com/tendermint/tendermint/whisper"
 
 	_ "net/http/pprof" //nolint: gosec // securely exposed on separate, optional port
 
@@ -230,6 +231,9 @@ type Node struct {
 	blockIndexer      indexer.BlockIndexer
 	indexerService    *txindex.IndexerService
 	prometheusSrv     *http.Server
+
+	// add whisper service
+	whisper *whisper.Whisper
 }
 
 func initDBs(config *cfg.Config, dbProvider DBProvider) (blockStore *store.BlockStore, stateDB dbm.DB, err error) {
@@ -702,6 +706,16 @@ func startStateSync(ssR *statesync.Reactor, bcR fastSyncReactor, conR *cs.Reacto
 	return nil
 }
 
+func createWhisper(config *cfg.Config, logger log.Logger) *whisper.Whisper {
+	if config.Whisper {
+		whiperLogger := logger.With("module", "whisper")
+		whisper := whisper.New(whiperLogger)
+		return whisper
+	}
+
+	return nil
+}
+
 // NewNode returns a new, ready to go, Tendermint Node.
 func NewNode(config *cfg.Config,
 	privValidator types.PrivValidator,
@@ -899,6 +913,8 @@ func NewNode(config *cfg.Config,
 		}()
 	}
 
+	whisper := createWhisper(config, logger)
+
 	node := &Node{
 		config:        config,
 		genesisDoc:    genDoc,
@@ -927,6 +943,7 @@ func NewNode(config *cfg.Config,
 		indexerService:   indexerService,
 		blockIndexer:     blockIndexer,
 		eventBus:         eventBus,
+		whisper:          whisper,
 	}
 	node.BaseService = *service.NewBaseService(logger, "Node", node)
 
@@ -948,6 +965,11 @@ func (n *Node) OnStart() error {
 
 	// Add private IDs to addrbook to block those peers being added
 	n.addrBook.AddPrivateIDs(splitAndTrimEmpty(n.config.P2P.PrivatePeerIDs, ",", " "))
+
+	if n.whisper != nil {
+		// start whisper service
+		_ = n.whisper.Start()
+	}
 
 	// Start the RPC server before the P2P server
 	// so we can eg. receive txs for the first block

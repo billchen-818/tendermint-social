@@ -147,6 +147,8 @@ abci = "{{ .BaseConfig.ABCI }}"
 # so the app can decide if we should keep the connection or not
 filter_peers = {{ .BaseConfig.FilterPeers }}
 
+# Whisper flag, add whisper message
+whisper = {{ .BaseConfig.Whisper }}
 
 #######################################################################
 ###                 Advanced Configuration Options                  ###

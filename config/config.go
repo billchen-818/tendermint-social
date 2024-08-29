@@ -227,6 +227,10 @@ type BaseConfig struct { //nolint: maligned
 	// If true, query the ABCI app on connecting to a new peer
 	// so the app can decide if we should keep the connection or not
 	FilterPeers bool `mapstructure:"filter_peers"` // false
+
+	// Whiper flag, if true the node whisper servive is opened
+	// and false the node whisper servive is closed
+	Whisper bool `mapstructure:"whisper"` // true
 }
 
 // DefaultBaseConfig returns a default base configuration for a Tendermint node
@@ -243,6 +247,7 @@ func DefaultBaseConfig() BaseConfig {
 		LogFormat:          LogFormatPlain,
 		FastSyncMode:       true,
 		FilterPeers:        false,
+		Whisper:            true,
 		DBBackend:          "goleveldb",
 		DBPath:             "data",
 	}
