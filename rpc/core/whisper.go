@@ -13,7 +13,7 @@ var (
 	ErrNoTopics = errors.New("missing topics")
 )
 
-func PublishEnvelope(ctx rpctypes.Context, envelop coretypes.Envelope) (*coretypes.ResultEnvelope, error) {
+func PublishEnvelope(ctx *rpctypes.Context, envelop coretypes.Envelope) (*coretypes.ResultEnvelope, error) {
 	if envelop.Topic == (whisper.TopicType{}) {
 		return nil, ErrNoTopics
 	}
