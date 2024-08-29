@@ -1110,6 +1110,8 @@ func (n *Node) ConfigureRPC() error {
 		Logger: n.Logger.With("module", "rpc"),
 
 		Config: *n.config.RPC,
+
+		Whisper: n.whisper,
 	})
 	if err := rpccore.InitGenesisChunks(); err != nil {
 		return err
@@ -1139,6 +1141,11 @@ func (n *Node) startRPC() ([]net.Listener, error) {
 	// See https://github.com/tendermint/tendermint/issues/3435
 	if config.WriteTimeout <= n.config.RPC.TimeoutBroadcastTxCommit {
 		config.WriteTimeout = n.config.RPC.TimeoutBroadcastTxCommit + 1*time.Second
+	}
+
+	// add whisper rpc
+	if n.whisper != nil {
+		rpccore.AddWhisperRoutes()
 	}
 
 	// we may expose the rpc over both a unix and tcp socket

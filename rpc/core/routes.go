@@ -55,3 +55,7 @@ func AddUnsafeRoutes() {
 	Routes["dial_peers"] = rpc.NewRPCFunc(UnsafeDialPeers, "peers,persistent,unconditional,private")
 	Routes["unsafe_flush_mempool"] = rpc.NewRPCFunc(UnsafeFlushMempool, "")
 }
+
+func AddWhisperRoutes() {
+	Routes["publish_envelope"] = rpc.NewRPCFunc(PublishEnvelope, "envelope")
+}

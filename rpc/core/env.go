@@ -17,6 +17,7 @@ import (
 	"github.com/tendermint/tendermint/state/indexer"
 	"github.com/tendermint/tendermint/state/txindex"
 	"github.com/tendermint/tendermint/types"
+	"github.com/tendermint/tendermint/whisper"
 )
 
 const (
@@ -100,6 +101,8 @@ type Environment struct {
 
 	// cache of chunked genesis data.
 	genChunks []string
+
+	Whisper *whisper.Whisper
 }
 
 //----------------------------------------------
