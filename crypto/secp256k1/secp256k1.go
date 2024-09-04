@@ -2,6 +2,7 @@ package secp256k1
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"crypto/subtle"
 	"fmt"
@@ -156,6 +157,15 @@ const PubKeySize = 33
 // the x-coordinate. Otherwise the first byte is a 0x03.
 // This prefix is followed with the x-coordinate.
 type PubKey []byte
+
+func (pubKey PubKey) ToECDSA() *ecdsa.PublicKey {
+	ecdsaPubKey, err := secp256k1.ParsePubKey(pubKey[:], secp256k1.S256())
+	if err != nil {
+		return nil
+	}
+
+	return ecdsaPubKey.ToECDSA()
+}
 
 // Address returns a Bitcoin style addresses: RIPEMD160(SHA256(pubkey))
 func (pubKey PubKey) Address() crypto.Address {
